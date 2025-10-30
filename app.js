@@ -1,8 +1,14 @@
 const express = require('express');
 
+require('./config/connect');
+
+const stagiaireRoutes = require('./routes/stagiaireRoutes');
+
 const app = express();
+app.use(express.json());
 
 
+app.use('/api/stagiaires', stagiaireRoutes);
 
 
 
