@@ -11,7 +11,6 @@ const formationSchema = new mongoose.Schema({
     planning: { type: String },
     image: { type: String },
     entreprise: { type: mongoose.Schema.Types.ObjectId, ref: 'Entreprise', required: true },
-    stagiairesPostules: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Stagiaire' }],
     valide: { type: Boolean, default: false },
 }, { timestamps: true });
 

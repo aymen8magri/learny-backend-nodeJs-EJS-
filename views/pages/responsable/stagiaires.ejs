@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Liste des Stagiaires</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <h1>Liste des Stagiaires</h1>
+
+  
+
+  <table border="1">
+    <tr>
+      <th>Nom</th>
+      <th>Email</th>
+      <th>Téléphone</th>
+      <th>Actions</th>
+    </tr>
+
+    <% stagiaires.forEach(stagiaire => { %>
+      <tr>
+        <td><%= stagiaire.firstName %></td>
+        <td><%= stagiaire.email %></td>
+        <td><%= stagiaire.phone %></td>
+        <td>
+          <form action="/responsable/stagiaires/<%= stagiaire._id %>/delete" method="POST">
+            <button type="submit">🗑️ Supprimer</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </table>
+</body>
+</html>

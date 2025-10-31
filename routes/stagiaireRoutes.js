@@ -3,30 +3,27 @@ const router = express.Router();
 const stagiaireController = require('../controllers/api/stagiaireController');
 const { isAuthenticated, checkRole } = require('../middlewares/auth.middleware');
 
-
 // =====================
-// Routes CRUD classiques
+// FRONT OFFICE : Stagiaire
 // =====================
 
-// Obtenir un stagiaire par ID
-router.get('/:id', isAuthenticated, checkRole('responsable', 'stagiaire'), stagiaireController.getStagiaireById);
+// Voir son propre profil
+router.get('/:id', isAuthenticated, checkRole('stagiaire'), stagiaireController.getStagiaireById);
 
-// Créer un nouveau stagiaire
-router.post('/', stagiaireController.createStagiaire);
-
-// Mettre à jour un stagiaire
-router.put('/:id', isAuthenticated, checkRole('responsable', 'stagiaire'), stagiaireController.updateStagiaire);
+// Mettre à jour son profil
+router.put('/:id', isAuthenticated, checkRole('stagiaire'), stagiaireController.updateStagiaire);
 
 
 // =====================
-// Routes spécifiques métier
+// BACK OFFICE : Responsable
 // =====================
 
-// Postuler à une formation
-router.post('/postuler/:formationId', isAuthenticated, checkRole('stagiaire'), stagiaireController.postulerFormation);
+// Lister tous les stagiaires
+// router.get('/', isAuthenticated, checkRole('responsable'), stagiaireController.getAllStagiaires);
+router.get('/', stagiaireController.getAllStagiaires);
 
-// Consulter ses candidatures
-router.get('/:stagiaireId/candidatures', isAuthenticated, checkRole('stagiaire'), stagiaireController.getCandidatures);
+// Supprimer un stagiaire
+router.delete('/:id', isAuthenticated, checkRole('responsable'), stagiaireController.deleteStagiaire);
 
 
 
