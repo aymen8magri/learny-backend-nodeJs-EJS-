@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- All Plugins Css -->
+    <link href="/css/plugins.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="/css/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+</head>
+
+<body class="blue-skin">
+    <div class="Loader"></div>
+
+
+    <div id="main-wrapper">
+
+        <%- include('../partials/navbar') %>
+
+        <!-- End Navigation -->
+        <div class="clearfix"></div>
+
+        <%- body %> <!-- Ici s’injecte le contenu de chaque page -->
+
+        <%- include('../partials/footer') %>
+
+    </div>
+
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/popper.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/select2.min.js"></script>
+    <script src="/js/owl.carousel.min.js"></script>
+    <script src="/js/ion.rangeSlider.min.js"></script>
+    <script src="/js/counterup.min.js"></script>
+    <script src="/js/materialize.min.js"></script>
+    <script src="/js/metisMenu.min.js"></script>
+    <script src="/js/custom.js"></script>
+</body>
+
+</html>
