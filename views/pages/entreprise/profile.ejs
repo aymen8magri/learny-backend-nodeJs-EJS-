@@ -1,0 +1,71 @@
+<div class="container mt-5 mb-5" ">
+
+
+  <!-- Profile Card -->
+  <div class="card shadow-sm p-4">
+    <div class="d-flex align-items-center mb-5">
+      <div class="me-3">
+        <% if (entreprise.logo) { %>
+          <img src="<%= entreprise.logo %>" alt="Logo de l’entreprise" class="rounded-circle" width="80" height="80" />
+          <% } else { %>
+            <img src="/img/co-4.jpg" alt="Logo par défaut" class="rounded-circle" width="80" height="80" />
+            <% } %>
+      </div>
+      <div>
+        <h4 class="mb-0">
+          <%= entreprise.name %>
+        </h4>
+        <small class="text-muted">
+          <%= entreprise.email %>
+        </small>
+      </div>
+    </div>
+
+    <!-- <form action="/entreprises/profile/update" method="POST" enctype="multipart/form-data"> -->
+    <form action="/entreprises/profile/update" method="POST">
+      <!-- Nom -->
+      <div class="form-group mb-3">
+        <label for="name"><i class="fa fa-building me-1"></i> Nom de l’entreprise</label>
+        <input type="text" id="name" name="name" value="<%= entreprise.name %>" class="form-control" required />
+      </div>
+
+      <!-- Adresse -->
+      <div class="form-group mb-3">
+        <label for="address"><i class="fa fa-map-marker-alt me-1"></i> Adresse</label>
+        <input type="text" id="address" name="address" value="<%= entreprise.address %>" class="form-control"
+          required />
+      </div>
+
+      <!-- Téléphone -->
+      <div class="form-group mb-3">
+        <label for="phone"><i class="fa fa-phone me-1"></i> Téléphone</label>
+        <input type="text" id="phone" name="phone" value="<%= entreprise.phone %>" class="form-control" required />
+      </div>
+
+      <!-- Email -->
+      <div class="form-group mb-3">
+        <label for="email"><i class="fa fa-envelope me-1"></i> Email</label>
+        <input type="email" id="email" name="email" value="<%= entreprise.email %>" class="form-control" readonly />
+      </div>
+
+      <!-- Logo -->
+      <div class="form-group mb-3">
+        <label for="logo"><i class="fa fa-image me-1"></i> Logo (optionnel)</label>
+        <input type="file" id="logo" name="logo" class="form-control" accept="image/*" />
+      </div>
+
+      <!-- Mot de passe -->
+      <div class="form-group mb-4">
+        <label for="password"><i class="fa fa-lock me-1"></i> Nouveau mot de passe</label>
+        <input type="password" id="password" name="password" class="form-control"
+          placeholder="Laissez vide si inchangé" />
+      </div>
+
+      <div class="text-end">
+        <button type="submit" class="btn btn-primary px-4">
+          <i class="fa fa-save me-1"></i> Enregistrer les modifications
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,45 +1,45 @@
 const express = require('express');
 const router = express.Router();
 const formationController = require('../controllers/formationController');
-const { isAuthenticated, checkRole } = require('../middlewares/auth.middleware');
+const { requireAuth } = require('../middlewares/requireAuth');
+const { checkRole } = require('../middlewares/auth.middleware');
+
+// =====================
+// BACK OFFICE : Entreprise et Responsable
+// =====================
+
+// Formulaire d'ajout d'une formation (entreprise)
+router.get('/add', requireAuth, checkRole('entreprise'), formationController.showAddForm);
+router.post('/add', requireAuth, checkRole('entreprise'), formationController.createFormation);
+
+// Lister les formations validees/non-validees de l'entreprise connectée
+router.get('/validees', requireAuth, checkRole('entreprise'), formationController.getFormationsValideesEntreprise);
+router.get('/non-validees', requireAuth, checkRole('entreprise'), formationController.getFormationsNonValideesEntreprise);
+
+// Mettre à jour / supprimer une formation (entreprise / responsable)
+router.put('/:id', requireAuth, checkRole('entreprise'), formationController.updateFormation);
+router.delete('/:id', requireAuth, checkRole(['responsable','entreprise']), formationController.deleteFormation);
+
+// Lister toutes les formations (responsable)
+router.get('/all/formations', requireAuth, checkRole('responsable'), formationController.getAllFormationsAdmin);
+
+// Lister formations d'une entreprise (responsable/entreprise)
+router.get('/all/entreprise/:entrepriseId', requireAuth, checkRole(['responsable','entreprise']), formationController.getFormationsByEntrepriseAdmin);
+
+// Voir une formation par ID (responsable/entreprise)
+router.get('/all/:id', requireAuth, checkRole(['responsable','entreprise']), formationController.getFormationByIdAdmin);
 
 // =====================
 // FRONT OFFICE : Stagiaire
 // =====================
 
-// voir tous les formations
-router.get('/', isAuthenticated, checkRole('stagiaire'), formationController.getAllFormations);
+// Voir toutes les formations (stagiaire)
+router.get('/', requireAuth, checkRole('stagiaire'), formationController.getAllFormations);
 
-// voir une formation par id
-router.get('/:id', isAuthenticated, checkRole('stagiaire'), formationController.getFormationById);
+// Voir les formations d'une entreprise (stagiaire)
+router.get('/entreprise/:entrepriseId', requireAuth, checkRole('stagiaire'), formationController.getFormationsByEntreprise);
 
-// voir les formations d'une entreprise
-router.get('/entreprise/:entrepriseId', isAuthenticated, checkRole('stagiaire'), formationController.getFormationsByEntreprise);
-
-
-// =====================
-// BACK OFFICE : Responsable, Entreprise
-// =====================
-
-// créer une formation
-router.post('/', isAuthenticated, checkRole('entreprise'), formationController.createFormation);
-
-// mettre à jour une formation
-router.put('/:id', isAuthenticated, checkRole('entreprise'), formationController.updateFormation);
-
-// supprimer une formation (responsable, entreprise)
-router.delete('/:id', isAuthenticated, checkRole(['responsable','entreprise']), formationController.deleteFormation);
-
-// lister toutes les formations (responsable)
-// router.get('/all/formations', isAuthenticated, checkRole('responsable'), formationController.getAllFormationsAdmin);
-router.get('/all/formations', formationController.getAllFormationsAdmin);
-
-// lister les formations par entreprise (responsable, entreprise)
-router.get('/all/entreprise/:entrepriseId', isAuthenticated, checkRole(['responsable','entreprise']), formationController.getFormationsByEntrepriseAdmin);
-
-// voir une formation par id (responsable, entreprise)
-router.get('/all/:id', isAuthenticated, checkRole(['responsable','entreprise']), formationController.getFormationByIdAdmin);
-
-
+// **DERNIÈRE** : voir une formation par ID (stagiaire) -> toujours après toutes les autres
+router.get('/getFormationById/:id', requireAuth, checkRole('stagiaire'), formationController.getFormationById);
 
 module.exports = router;

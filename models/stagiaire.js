@@ -7,6 +7,7 @@ const stagiaireSchema = new mongoose.Schema({
     password: { type: String, required: true },
     phone: { type: String },
     profilePicture: { type: String },
+      role: { type: String, default: 'stagiaire' }, 
 }, { timestamps: true });
 
 

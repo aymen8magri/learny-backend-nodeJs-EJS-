@@ -15,26 +15,45 @@
 
                             <ul class="nav-menu">
                                 <li><a href="/">Accueil</a></li>
-                                <li><a href="/formations/all/formations">Formations</a></li>
-                                <li><a href="/entreprises/all/entreprises">Entreprises</a></li>
-                                <li><a href="/stagiaires/">Stagiaires</a></li>
+
+                                <% if (user && user.role === 'entreprise') { %>
+                                    <li><a href="/entreprises/profile"><i class="fa fa-user"></i> Profil</a></li>
+                                    <li><a href="/formations/add"><i class="fa fa-plus"></i> Ajouter une formation</a></li>
+                                    <li><a href="/formations/validees"><i class="fa fa-check"></i> Formations validées</a></li>
+                                    <li><a href="/formations/non-validees"><i class="fa fa-times"></i> Formations non validées</a></li>
+
+                                <% } else if (user && user.role === 'responsable') { %>
+                                    <li><a href="/responsable/dashboard"><i class="fa fa-chart-line"></i> Dashboard</a></li>
+                                    <li><a href="/formations/all/formations"><i class="fa fa-list"></i> Formations validées</a></li>
+                                    <li><a href="/formations/demandes"><i class="fa fa-envelope"></i> Demandes de postulation</a></li>
+                                    <li><a href="/entreprises/all/entreprises"><i class="fa fa-building"></i> Entreprises</a></li>
+                                    <li><a href="/stagiaires"><i class="fa fa-users"></i> Stagiaires</a></li>
+                                    
+
+                                <% }  %>
+
+                                
                             </ul>
 
 
 
                         </ul>
 
+                        <!-- Section droite : connexion ou déconnexion -->
                         <ul class="nav-menu nav-menu-social align-to-right">
-
-
-
-                            <li class="add-listing dark-bg">
-                                <a>
-                                    <i class="ti-user mr-1"></i> Sign in
-                                </a>
+                        <% if (user) { %>
+                            <li class="add-listing red-bg">
+                            <a href="/logout">
+                                <i class="ti-power-off mr-1"></i> Logout
+                            </a>
                             </li>
-
-
+                        <% } else { %>
+                            <li class="add-listing dark-bg">
+                            <a href="/login">
+                                <i class="ti-user mr-1"></i> Sign in
+                            </a>
+                            </li>
+                        <% } %>
                         </ul>
                     </div>
                 </nav>

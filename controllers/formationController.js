@@ -40,17 +40,81 @@ exports.getFormationsByEntreprise = async (req, res) => {
 // =====================
 // BACK OFFICE : Responsable, Entreprise
 // =====================
+// Afficher le formulaire d'ajout de formation
+exports.showAddForm = async (req, res) => {
+    try {
+        // On peut récupérer l'id et le nom de l'entreprise connectée
+        const entrepriseId = req.user.id;
+        const entrepriseName = req.user.nom; // si tu as stocké le nom dans le token/session
+
+        res.render('pages/formations/add', { entrepriseId, entrepriseName });
+    } catch (error) {
+        console.error(error);
+        res.status(500).render('error', { message: 'Erreur lors du chargement du profil' });
+    }
+};
 
 // Créer une formation
 exports.createFormation = async (req, res) => {
     try {
-        const newFormation = new Formation(req.body);
+        // On récupère les champs du formulaire
+        const { title, description, dateDebut, dateFin, nbPlaces, duration, price, planning } = req.body;
+
+        // On récupère l'entreprise connectée via req.user.id
+        const entrepriseId = req.user.id;
+
+        // Création de la formation
+        const newFormation = new Formation({
+            title,
+            description,
+            dateDebut,
+            dateFin,
+            nbPlaces,
+            duration,
+            price,
+            planning,
+            entreprise: entrepriseId,  // association automatique
+            status: 'En attente'       // valeur par défaut
+        });
+
         await newFormation.save();
-        res.redirect('/formations/list');
+
+        // Redirection vers le formulaire ou vers la liste
+        res.redirect('/formations/add');  // ou '/formations/all/entreprise/:id' si tu veux montrer la liste
     } catch (error) {
+        console.error(error);
         res.status(500).render('error', { message: 'Erreur lors de la création de la formation' });
     }
 };
+
+// Formations validées pour l'entreprise connectée
+exports.getFormationsValideesEntreprise = async (req, res) => {
+    try {
+        const formations = await Formation.find({
+            status: 'Validée',
+            entreprise: req.user.id   // filtrer par entreprise connectée
+        });
+        res.render('pages/formations/list', { formations });
+    } catch (error) {
+        console.error(error);
+        res.status(500).render('error', { message: 'Erreur serveur' });
+    }
+};
+
+// Formations non validées pour l'entreprise connectée
+exports.getFormationsNonValideesEntreprise = async (req, res) => {
+    try {
+        const formations = await Formation.find({
+            status: 'En attente',
+            entreprise: req.user.id   // filtrer par entreprise connectée
+        });
+        res.render('pages/formations/list', { formations });
+    } catch (error) {
+        console.error(error);
+        res.status(500).render('error', { message: 'Erreur serveur' });
+    }
+};
+
 
 // Mettre à jour une formation
 exports.updateFormation = async (req, res) => {

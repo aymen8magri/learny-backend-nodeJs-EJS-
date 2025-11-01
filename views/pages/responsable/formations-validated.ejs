@@ -1,0 +1,35 @@
+<div class="container mt-5">
+  <h2 class="mb-4">Formations en attente</h2>
+
+  <% if (formations.length === 0) { %>
+    <p>Aucune formation en attente.</p>
+  <% } else { %>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Entreprise</th>
+          <th>Durée</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% formations.forEach(formation => { %>
+          <tr>
+            <td><%= formation.title %></td>
+            <td><%= formation.entreprise?.name || 'N/A' %></td>
+            <td><%= formation.duration %> jours</td>
+            <td>
+              <form action="/responsable/formations/<%= formation._id %>/validate" method="POST" style="display:inline;">
+                <button class="btn btn-success btn-sm">✅ Valider</button>
+              </form>
+              <form action="/responsable/formations/<%= formation._id %>/reject" method="POST" style="display:inline;">
+                <button class="btn btn-danger btn-sm">❌ Refuser</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</div>

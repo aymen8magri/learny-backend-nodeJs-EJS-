@@ -1,38 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const responsableController = require('../controllers/api/responsableController');
+const responsableController = require('../controllers/responsableController');
 const { isAuthenticated, checkRole } = require('../middlewares/auth.middleware');
 
-// Toutes les routes sont protégées pour les responsables (admin)
-router.use(isAuthenticated, checkRole('responsable'));
+// Page listant les formations en attente
+router.get('/formations/pending', isAuthenticated, checkRole('responsable'), responsableController.getPendingFormations);
 
-// =====================
-// Gestion des utilisateurs (stagiaires et entreprises)
-// =====================
+// Page listant les formations validées
+router.get('/formations/validated', isAuthenticated, checkRole('responsable'), responsableController.getValidatedFormations);
 
-// Voir tous les stagiaires
-router.get('/stagiaires', responsableController.getAllUsers);
-
-// Voir tous les entreprises
-router.get('/entreprises', responsableController.getAllUsers);
-
-// Supprimer un stagiaire
-router.delete('/stagiaires/:id', responsableController.deleteUser);
-
-// Supprimer une entreprise
-router.delete('/entreprises/:id', responsableController.deleteUser);
-
-// =====================
-// Gestion des formations
-// =====================
-
-// Voir toutes les formations (en attente ou validées)
-router.get('/formations', responsableController.getAllFormations);
-
-// Valider une formation avant publication
-router.patch('/formations/:id/validate', responsableController.validateFormation);
-
-// Supprimer une formation
-router.delete('/formations/:id', responsableController.deleteFormation);
+// Actions sur les formations
+router.post('/formations/:id/validate', isAuthenticated, checkRole('responsable'), responsableController.validateFormation);
+router.post('/formations/:id/reject', isAuthenticated, checkRole('responsable'), responsableController.rejectFormation);
 
 module.exports = router;

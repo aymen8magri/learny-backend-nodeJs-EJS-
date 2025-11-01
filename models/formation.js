@@ -11,7 +11,7 @@ const formationSchema = new mongoose.Schema({
     planning: { type: String },
     image: { type: String },
     entreprise: { type: mongoose.Schema.Types.ObjectId, ref: 'Entreprise', required: true },
-    valide: { type: Boolean, default: false },
+    status: { type: String, enum: ['En attente', 'Validée', 'Refusée'], default: 'En attente' }
 }, { timestamps: true });
 
 

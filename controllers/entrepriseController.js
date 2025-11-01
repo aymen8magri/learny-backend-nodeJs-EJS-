@@ -1,4 +1,5 @@
 const Entreprise = require('../models/Entreprise');
+const bcrypt = require('bcrypt');
 
 
 // =====================
@@ -21,30 +22,34 @@ exports.getAllEntreprises = async (req, res) => {
 // =====================
 
 // Voir le profil de son entreprise
-exports.getEntrepriseById = async (req, res) => {
+exports.showProfilePage = async (req, res) => {
     try {
-        const entreprise = await Entreprise.findById(req.params.id);
-        if (!entreprise) {
-            return res.status(404).render('error', { message: 'Entreprise non trouvée' });
-        }
-        res.render('entrepriseProfile', { entreprise });
+        const entreprise = await Entreprise.findById(req.user.id);
+        res.render('pages/entreprise/profile', { entreprise });
     } catch (error) {
-        res.status(500).render('error', { message: 'Erreur serveur' });
-    }   
+        console.error(error);
+        res.status(500).render('error', { message: 'Erreur lors du chargement du profil' });
+    }
 };
 
 // Mettre à jour le profil de son entreprise
-exports.updateEntreprise = async (req, res) => {
+exports.updateProfile = async (req, res) => {
     try {
-        const updatedEntreprise = await Entreprise.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!updatedEntreprise) {
-            return res.status(404).render('error', { message: 'Entreprise non trouvée' });
+        const { name, address, phone, password } = req.body;
+        const updateData = { name, address, phone };
+
+        if (password && password.trim() !== "") {
+            updateData.password = await bcrypt.hash(password, 10);
         }
-        res.redirect(`/entreprises/${req.params.id}`);
-    } catch (error) {
-        res.status(500).render('error', { message: 'Erreur lors de la mise à jour de l\'entreprise' });
+
+        await Entreprise.findByIdAndUpdate(req.user.id, updateData);
+        res.redirect('/entreprises/profile');
+    } catch (err) {
+        console.error(err);
+        res.status(500).render('error', { message: "Erreur lors de la mise à jour" });
     }
 };
+
 
 // Lister toutes les entreprises (admin)
 exports.getAllEntreprisesAdmin = async (req, res) => {
