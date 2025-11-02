@@ -17,6 +17,9 @@ router.get('/', requireAuth, checkRole('stagiaire'), entrepriseController.getAll
 // BACK OFFICE : Responsable, Entreprise
 // =====================
 
+// Dashboard entreprise
+router.get('/dashboard', requireAuth, checkRole('entreprise'), entrepriseController.showDashboard);
+
 // Voir le profil de entreprise
 router.get('/profile', requireAuth, checkRole('entreprise'), entrepriseController.showProfilePage);
 

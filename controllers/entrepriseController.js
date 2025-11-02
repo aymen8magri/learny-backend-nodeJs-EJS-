@@ -1,5 +1,6 @@
 const Entreprise = require('../models/Entreprise');
 const bcrypt = require('bcrypt');
+const Formation = require('../models/Formation');
 
 
 // =====================
@@ -20,6 +21,28 @@ exports.getAllEntreprises = async (req, res) => {
 // =====================
 // BACK OFFICE : Responsable, Entreprise
 // =====================
+
+// Afficher le dashboard de l'entreprise
+exports.showDashboard = async (req, res) => {
+  try {
+    const entreprise = await Entreprise.findById(req.user.id);
+
+    const formations = await Formation.find({ entreprise: req.user.id }).sort({ createdAt: -1 }).limit(5);
+    const totalFormations = await Formation.countDocuments({ entreprise: req.user.id });
+    const pendingFormations = await Formation.countDocuments({ entreprise: req.user.id, status: 'En attente' });
+    const validatedFormations = await Formation.countDocuments({ entreprise: req.user.id, status: 'Validée' });
+    const refusedFormations = await Formation.countDocuments({ entreprise: req.user.id, status: 'Refusée' });
+
+    res.render('pages/entreprise/dashboard', {
+      entreprise,
+      formations,
+      stats: { totalFormations, pendingFormations, validatedFormations, refusedFormations }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).render('error', { message: 'Erreur lors du chargement du dashboard' });
+  }
+};
 
 // Voir le profil de son entreprise
 exports.showProfilePage = async (req, res) => {

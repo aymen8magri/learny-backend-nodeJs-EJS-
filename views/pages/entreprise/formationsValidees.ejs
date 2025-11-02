@@ -1,0 +1,148 @@
+<!-- ============================ Page Title Start ================================== -->
+<section class="call-to-act" style="background:#0b85ec url(/img/landing-bg.png) no-repeat">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-12 col-md-12">
+        <h2 class="text-light">Formations Validées</h2>
+        <span class="ipn-subtitle text-light">
+          Dashboard Entreprise — 
+          <span style="color:#0c0101; font-weight:600;">Formations validées par le responsable</span>
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ============================ Page Title End ================================== -->
+
+<!-- ============================ Main Section Start ================================== -->
+<section class="gray-bg py-5">
+  <div class="container">
+
+    <!-- Barre de recherche + filtre -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+      <div class="input-group w-auto">
+        <input type="text" id="searchInput" class="form-control" placeholder="Rechercher une formation...">
+        <button class="btn btn-dark" type="button"><i class="fa fa-search"></i></button>
+      </div>
+
+      <div class="dropdown">
+        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          Trier par
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="filterDropdown">
+          <li><a class="dropdown-item sort-option active" data-sort="none">Aucun</a></li>
+          <li><a class="dropdown-item sort-option" data-sort="price">Prix</a></li>
+          <li><a class="dropdown-item sort-option" data-sort="duration">Durée</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <% if (formations.length === 0) { %>
+      <div class="alert alert-info text-center">
+        Aucune formation validée pour le moment.
+      </div>
+    <% } else { %>
+      <div class="row" id="formationsContainer">
+        <% formations.forEach(function(f) { %>
+          <div class="col-lg-4 col-md-6 col-sm-12 formation-card" 
+               data-title="<%= f.title.toLowerCase() %>" 
+               data-price="<%= f.price %>" 
+               data-duration="<%= f.duration %>">
+
+            <div class="ser_110 shadow_0">
+              <div class="ser_110_thumb position-relative">
+                <!-- Dropdown Actions -->
+                <div class="dropdown position-absolute top-0 end-0 m-2">
+                  <button class="btn btn-sm btn-light dropdown-toggle" type="button" id="dropdownMenu<%= f._id %>" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa fa-cog"></i>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu<%= f._id %>">
+                    <li><a class="dropdown-item" href="/formations/<%= f._id %>"><i class="fa fa-info-circle me-2"></i> Détails</a></li>
+                    <li><a class="dropdown-item" href="/entreprise/edit-formation/<%= f._id %>"><i class="fa fa-edit me-2"></i> Modifier</a></li>
+                    <li><a class="dropdown-item" href="/entreprise/inscriptions/<%= f._id %>"><i class="fa fa-users me-2"></i> Liste des inscrits</a></li>
+                    <li><a class="dropdown-item text-danger" style="cursor:pointer;" onclick="supprimerFormation('<%= f._id %>')"><i class="fa fa-trash me-2"></i> Supprimer</a></li>
+                  </ul>
+                </div>
+
+                <img src="<%= f.image || '/img/co-4.jpg' %>" class="img-fluid" alt="<%= f.title %>">
+              </div>
+
+              <div class="ser_110_caption p-3">
+                <h4 class="_ser_title mb-2"><%= f.title %></h4>
+                <p class="text-muted small mb-2"><%= f.description || 'Aucune description disponible.' %></p>
+
+                <div class="d-flex justify-content-between mb-2 _oi0po">
+                  <span><i class="fa fa-clock"></i> <%= f.duration %> heures</span>
+                  <span><i class="fa fa-users"></i> <%= f.nbPlaces %> places</span>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="fw-bold text-success"><%= f.price %> TND</span>
+                  <span class="badge bg-success">Validée</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+</section>
+<!-- ============================ Main Section End ================================== -->
+
+<!-- ============================ Inline CSS + JS ============================ -->
+<style>
+  .ser_110 {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: white;
+  }
+  .ser_110:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+  }
+  .badge { font-size: 0.9em; padding: 6px 10px; border-radius: 8px; }
+  .sort-option.active { background-color: #0b85ec; color: white !important; }
+</style>
+
+<script>
+  // Recherche instantanée
+  document.getElementById('searchInput').addEventListener('input', function() {
+    const search = this.value.toLowerCase();
+    document.querySelectorAll('.formation-card').forEach(card => {
+      const title = card.getAttribute('data-title');
+      card.style.display = title.includes(search) ? '' : 'none';
+    });
+  });
+
+  // Tri dynamique
+  document.querySelectorAll('.sort-option').forEach(opt => {
+    opt.addEventListener('click', function() {
+      document.querySelectorAll('.sort-option').forEach(o => o.classList.remove('active'));
+      this.classList.add('active');
+
+      const sortBy = this.getAttribute('data-sort');
+      const container = document.getElementById('formationsContainer');
+      const cards = Array.from(container.querySelectorAll('.formation-card'));
+
+      if (sortBy === 'none') return;
+
+      cards.sort((a, b) => {
+        const valA = parseFloat(a.getAttribute(`data-${sortBy}`)) || 0;
+        const valB = parseFloat(b.getAttribute(`data-${sortBy}`)) || 0;
+        return valA - valB;
+      });
+
+      cards.forEach(c => container.appendChild(c));
+    });
+  });
+
+  // Supprimer une formation
+  function supprimerFormation(id) {
+    if (confirm("Voulez-vous vraiment supprimer cette formation ?")) {
+      fetch(`/formations/${id}`, { method: 'DELETE' })
+        .then(res => { if (res.ok) location.reload(); });
+    }
+  }
+</script>

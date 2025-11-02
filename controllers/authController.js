@@ -100,7 +100,7 @@ exports.login = async (req, res) => {
       maxAge: 2 * 60 * 60 * 1000, // 2 heures
     });
     if (role === 'responsable') return res.redirect('/responsable/dashboard');
-    if (role === 'entreprise') return res.redirect('/entreprises/profile');
+    if (role === 'entreprise') return res.redirect('/entreprises/dashboard');
   } catch (err) {
     console.error(err);
     if (req.body.source === 'web')

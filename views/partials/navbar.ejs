@@ -17,6 +17,7 @@
                                 <li><a href="/">Accueil</a></li>
 
                                 <% if (user && user.role === 'entreprise') { %>
+                                    <li><a href="/entreprises/dashboard"><i class="fa fa-chart-line"></i> Dashboard</a></li>
                                     <li><a href="/entreprises/profile"><i class="fa fa-user"></i> Profil</a></li>
                                     <li><a href="/formations/add"><i class="fa fa-plus"></i> Ajouter une formation</a></li>
                                     <li><a href="/formations/validees"><i class="fa fa-check"></i> Formations validées</a></li>
@@ -24,8 +25,8 @@
 
                                 <% } else if (user && user.role === 'responsable') { %>
                                     <li><a href="/responsable/dashboard"><i class="fa fa-chart-line"></i> Dashboard</a></li>
-                                    <li><a href="/formations/all/formations"><i class="fa fa-list"></i> Formations validées</a></li>
-                                    <li><a href="/formations/demandes"><i class="fa fa-envelope"></i> Demandes de postulation</a></li>
+                                    <li><a href="/responsable/formations/validated"><i class="fa fa-list"></i> Formations validées</a></li>
+                                    <li><a href="/responsable/formations/pending"><i class="fa fa-envelope"></i> Demandes de postulation</a></li>
                                     <li><a href="/entreprises/all/entreprises"><i class="fa fa-building"></i> Entreprises</a></li>
                                     <li><a href="/stagiaires"><i class="fa fa-users"></i> Stagiaires</a></li>
                                     

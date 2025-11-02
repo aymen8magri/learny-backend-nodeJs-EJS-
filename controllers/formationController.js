@@ -94,7 +94,7 @@ exports.getFormationsValideesEntreprise = async (req, res) => {
             status: 'Validée',
             entreprise: req.user.id   // filtrer par entreprise connectée
         });
-        res.render('pages/formations/list', { formations });
+        res.render('pages/entreprise/formationsValidees', { formations });
     } catch (error) {
         console.error(error);
         res.status(500).render('error', { message: 'Erreur serveur' });
@@ -105,10 +105,10 @@ exports.getFormationsValideesEntreprise = async (req, res) => {
 exports.getFormationsNonValideesEntreprise = async (req, res) => {
     try {
         const formations = await Formation.find({
-            status: 'En attente',
+            status: { $in: ['En attente', 'Refusée'] },
             entreprise: req.user.id   // filtrer par entreprise connectée
         });
-        res.render('pages/formations/list', { formations });
+        res.render('pages/entreprise/formationsNonValidees', { formations });
     } catch (error) {
         console.error(error);
         res.status(500).render('error', { message: 'Erreur serveur' });
