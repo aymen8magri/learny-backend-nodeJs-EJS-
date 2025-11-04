@@ -36,7 +36,6 @@
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu<%= e._id %>">
                   <li><a class="dropdown-item" href="/entreprises/<%= e._id %>"><i class="fa fa-info-circle me-2"></i> Voir les détails</a></li>
-                  <li><a class="dropdown-item" href="/entreprises/edit/<%= e._id %>"><i class="fa fa-edit me-2"></i> Modifier</a></li>
                   <li><a class="dropdown-item text-danger" href="#" onclick="supprimerEntreprise('<%= e._id %>')"><i class="fa fa-trash me-2"></i> Supprimer</a></li>
                 </ul>
               </div>
@@ -87,7 +86,7 @@
               </div>
 
               <div class="card-footer text-center" style="background-color: #f8f9fa;">
-                <a href="/entreprises/<%= e._id %>/formations" class="btn btn-sm btn-outline-primary">
+                <a href="/formations/all/entreprise/<%= e._id %>" class="btn btn-sm btn-outline-primary">
                   <i class="fa fa-chalkboard-teacher"></i> Voir les formations
                 </a>
               </div>

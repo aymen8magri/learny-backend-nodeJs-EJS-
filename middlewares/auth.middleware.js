@@ -7,7 +7,7 @@ exports.setUserInViews = (req, res, next) => {
   if (token) {
     try {
       const decoded = jwt.verify(token, '123456789');
-      res.locals.user = decoded; // 🔥 utilisable dans EJS (navbar)
+      res.locals.user = decoded;
     } catch (err) {
       res.locals.user = null;
     }

@@ -78,7 +78,7 @@ exports.validateFormation = async (req, res) => {
     if (!formation) {
       return res.status(404).render('error', { message: 'Formation non trouvée' });
     }
-    res.redirect('/responsable/formations-validated');
+    res.redirect('/responsable/formations/validated');
   } catch (error) {
     res.status(500).render('error', { message: 'Erreur lors de la validation' });
   }
@@ -91,7 +91,7 @@ exports.rejectFormation = async (req, res) => {
     if (!formation) {
       return res.status(404).render('error', { message: 'Formation non trouvée' });
     }
-    res.redirect('/responsable/formations-pending');
+    res.redirect('/responsable/formations/pending');
   } catch (error) {
     res.status(500).render('error', { message: 'Erreur lors du rejet' });
   }

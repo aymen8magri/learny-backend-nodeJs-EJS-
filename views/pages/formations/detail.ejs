@@ -1,0 +1,209 @@
+<!-- ============================ Page Title Start ================================== -->
+<section class="call-to-act" style="background:#3d6485 url(/img/landing-bg.png) no-repeat">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-8 col-md-8">
+        <h2 class="text-light"><%= formation.title %></h2>
+        <span class="ipn-subtitle text-light">
+          Détails complets de la formation
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ============================ Page Title End ================================== -->
+
+
+<!-- ============================ Main Section Start ================================== -->
+<section class="gray-light py-5">
+  <div class="container">
+    <div class="row g-4">
+
+      <!-- Colonne gauche -->
+      <div class="col-lg-8 col-md-12">
+        <div class="card shadow-sm border-0 p-4">
+          <h4 class="mb-3">Programme de la formation</h4>
+          <p><%= formation.description %></p>
+
+          <% if (formation.planning) { %>
+            <div class="mt-3">
+              <h5><i class="fa fa-list-ul"></i> Planning</h5>
+              <ul class="list-group list-group-flush mt-2">
+                <% formation.planning.split('\n').forEach((item) => { %>
+                  <li class="list-group-item"><%= item %></li>
+                <% }) %>
+              </ul>
+            </div>
+          <% } %>
+        </div>
+
+        <!-- Informations sur l’entreprise -->
+        <div class="card shadow-sm border-0 p-4 mt-4">
+          <div class="d-flex align-items-center">
+            <img src="<%= formation.entreprise?.logo || '/img/co-4.jpg' %>"
+                 class="rounded-circle me-3" width="80" height="80" alt="logo entreprise">
+            <div>
+              <h4><%= formation.entreprise?.name %></h4>
+              <p class="mb-0"><i class="fa fa-envelope"></i> <%= formation.entreprise?.email %></p>
+              <p class="mb-0"><i class="fa fa-phone"></i> <%= formation.entreprise?.phone %></p>
+              <p class="mb-0"><i class="fa fa-map-marker-alt"></i> <%= formation.entreprise?.address %></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Zone d’actions selon le rôle et le statut -->
+        <div class="card shadow-sm border-0 p-4 mt-4">
+          <h5 class="mb-3">Actions disponibles</h5>
+
+          <% if (user.role === 'entreprise') { %>
+            <!-- ✅ ENTREPRISE -->
+            <% if (formation.status === 'Validée') { %>
+              <div class="d-flex flex-wrap gap-2">
+                <a href="/entreprise/edit-formation/<%= formation._id %>" class="btn btn-warning">
+                  <i class="fa fa-edit"></i> Modifier
+                </a>
+                <a href="/entreprise/inscriptions/<%= formation._id %>" class="btn btn-info">
+                  <i class="fa fa-users"></i> Liste des inscrits
+                </a>
+                <a href="/entreprise/demandes-inscription/<%= formation._id %>" class="btn btn-secondary">
+                  <i class="fa fa-envelope-open-text"></i> Demandes d’inscriptions
+                </a>
+                <button onclick="supprimerFormation('<%= formation._id %>')" class="btn btn-danger">
+                  <i class="fa fa-trash"></i> Supprimer
+                </button>
+              </div>
+            <% } else { %>
+              <div class="d-flex flex-wrap gap-2">
+                <a href="/entreprise/edit-formation/<%= formation._id %>" class="btn btn-warning">
+                  <i class="fa fa-edit"></i> Modifier
+                </a>
+                <button onclick="supprimerFormation('<%= formation._id %>')" class="btn btn-danger">
+                  <i class="fa fa-trash"></i> Supprimer
+                </button>
+              </div>
+            <% } %>
+
+          <% } else if (user.role === 'responsable') { %>
+            <!-- 👑 RESPONSABLE -->
+            <% if (formation.status === 'Validée') { %>
+              <div class="d-flex flex-wrap gap-2">
+                <form action="/responsable/formations/<%= formation._id %>/reject" method="POST">
+                  <button class="btn btn-danger">
+                    <i class="fa fa-times-circle"></i> Refuser
+                  </button>
+                </form>
+              </div>
+
+            <% } else if (formation.status === 'En attente') { %>
+              <div class="d-flex flex-wrap gap-2">
+                <form action="/responsable/formations/<%= formation._id %>/validate" method="POST">
+                  <button class="btn btn-success">
+                    <i class="fa fa-check-circle"></i> Valider
+                  </button>
+                </form>
+                <form action="/responsable/formations/<%= formation._id %>/reject" method="POST">
+                  <button class="btn btn-danger">
+                    <i class="fa fa-times-circle"></i> Refuser
+                  </button>
+                </form>
+              </div>
+
+            <% } else if (formation.status === 'Refusée') { %>
+              <div class="d-flex flex-wrap gap-2">
+                <form action="/responsable/formations/<%= formation._id %>/validate" method="POST">
+                  <button class="btn btn-success">
+                    <i class="fa fa-check-circle"></i> Valider
+                  </button>
+                </form>
+                <form action="/responsable/formations/<%= formation._id %>/delete" method="POST" onsubmit="return confirm('Voulez-vous supprimer cette formation ?');">
+                  <button class="btn btn-danger">
+                    <i class="fa fa-trash"></i> Supprimer
+                  </button>
+                </form>
+              </div>
+            <% } %>
+
+          <% } else { %>
+            <p class="text-muted">Aucune action disponible pour votre rôle.</p>
+          <% } %>
+        </div>
+
+      </div>
+
+      <!-- Colonne droite -->
+      <div class="col-lg-4 col-md-12">
+        <div class="card shadow-sm border-0">
+          <img src="<%= formation.image || '/img/co-4.jpg' %>"
+               class="card-img-top" alt="<%= formation.title %>" />
+
+          <div class="card-body text-center">
+            <h4><%= formation.title %></h4>
+            <h5 class="theme-cl mb-3"><%= formation.price %> TND</h5>
+
+            <!-- Badge statut -->
+            <% if (formation.status === 'Validée') { %>
+              <span class="badge bg-success">Validée</span>
+            <% } else if (formation.status === 'En attente') { %>
+              <span class="badge bg-warning text-dark">En attente</span>
+            <% } else { %>
+              <span class="badge bg-danger">Refusée</span>
+            <% } %>
+
+            <hr>
+            <ul class="list-unstyled text-start">
+              <li><i class="fa fa-users"></i> <strong>Places :</strong> <%= formation.nbPlaces %></li>
+              <li><i class="fa fa-clock"></i> <strong>Durée :</strong> <%= formation.duration %> heures</li>
+              <li><i class="fa fa-calendar-alt"></i> <strong>Début :</strong> <%= formation.dateDebut.toLocaleDateString('fr-FR') %></li>
+              <li><i class="fa fa-calendar-alt"></i> <strong>Fin :</strong> <%= formation.dateFin.toLocaleDateString('fr-FR') %></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+<!-- ============================ Main Section End ================================== -->
+
+
+<!-- ============================ Script suppression ============================ -->
+<script>
+  function supprimerFormation(id) {
+    if (confirm('Voulez-vous vraiment supprimer cette formation ?')) {
+      fetch(`/entreprise/delete-formation/${id}`, { method: 'DELETE' })
+        .then(res => {
+          if (res.ok) {
+            alert('Formation supprimée avec succès');
+            window.location.href = '/entreprise/formations';
+          } else {
+            alert('Erreur lors de la suppression');
+          }
+        });
+    }
+  }
+</script>
+
+
+<!-- ============================ Styles ============================ -->
+<style>
+  .gray-light {
+    background-color: #f9f9f9;
+  }
+  .card {
+    border-radius: 12px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.1);
+  }
+  .theme-cl {
+    color: #0b85ec;
+  }
+  .btn {
+    border-radius: 6px;
+  }
+  .gap-2 {
+    gap: 0.5rem;
+  }
+</style>

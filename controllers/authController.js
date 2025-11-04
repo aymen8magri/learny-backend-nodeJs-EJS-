@@ -30,7 +30,6 @@ exports.signup = async (req, res) => {
 
     const existingEntreprise = await Entreprise.findOne({ email });
     if (existingEntreprise) {
-      // Erreur visible sur la page avec toastr
       return res.render('pages/signup', { error: 'Email déjà utilisé', success: null });
     }
 
@@ -43,10 +42,7 @@ exports.signup = async (req, res) => {
       phone,
       role: 'entreprise',
     });
-
     await entreprise.save();
-
-    // ✅ Redirection auto après succès
     return res.redirect('/login?registered=1');
   } catch (err) {
     console.error(err);

@@ -4,7 +4,7 @@ const authController = require('../controllers/authController');
 
 // === Flutter / API ===
 router.post('/api/signup', (req, res, next) => {
-  req.body.source = 'api'; // 👈 on précise la source
+  req.body.source = 'api';
   next();
 }, authController.signup);
 
@@ -12,6 +12,7 @@ router.post('/api/login', (req, res, next) => {
   req.body.source = 'api';
   next();
 }, authController.login);
+
 
 // === EJS / Web ===
 router.get('/login', authController.showLoginPage);

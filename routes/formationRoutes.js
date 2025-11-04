@@ -18,16 +18,16 @@ router.get('/non-validees', requireAuth, checkRole('entreprise'), formationContr
 
 // Mettre à jour / supprimer une formation (entreprise / responsable)
 router.put('/:id', requireAuth, checkRole('entreprise'), formationController.updateFormation);
-router.delete('/:id', requireAuth, checkRole(['responsable','entreprise']), formationController.deleteFormation);
+router.delete('/:id', requireAuth, checkRole('responsable', 'entreprise'), formationController.deleteFormation);
 
 // Lister toutes les formations (responsable)
 router.get('/all/formations', requireAuth, checkRole('responsable'), formationController.getAllFormationsAdmin);
 
 // Lister formations d'une entreprise (responsable/entreprise)
-router.get('/all/entreprise/:entrepriseId', requireAuth, checkRole(['responsable','entreprise']), formationController.getFormationsByEntrepriseAdmin);
+router.get('/all/entreprise/:entrepriseId', requireAuth, checkRole('responsable', 'entreprise'), formationController.getFormationsByEntrepriseAdmin);
 
 // Voir une formation par ID (responsable/entreprise)
-router.get('/all/:id', requireAuth, checkRole(['responsable','entreprise']), formationController.getFormationByIdAdmin);
+router.get('/all/:id', requireAuth, checkRole('responsable', 'entreprise'), formationController.getFormationByIdAdmin);
 
 // =====================
 // FRONT OFFICE : Stagiaire

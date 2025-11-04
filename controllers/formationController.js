@@ -165,11 +165,11 @@ exports.getFormationsByEntrepriseAdmin = async (req, res) => {
 // Voir une formation par ID (Responsable, Entreprise)
 exports.getFormationByIdAdmin = async (req, res) => {
     try {
-        const formation = await Formation.findById(req.params.id);
+        const formation = await Formation.findById(req.params.id).populate('entreprise');
         if (!formation) {
             return res.status(404).render('error', { message: 'Formation non trouvée' });
         }
-        res.render('formations/detail', { formation });
+        res.render('pages/formations/detail', { formation, entreprise: formation.entreprise });
     } catch (error) {
         res.status(500).render('error', { message: 'Erreur serveur' });
     }
