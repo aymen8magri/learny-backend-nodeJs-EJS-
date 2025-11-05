@@ -52,8 +52,10 @@ exports.deleteStagiaire = async (req, res) => {
         if (!deletedStagiaire) {
             res.render('responsable/stagiaires', { error: 'Stagiaire non trouvé' });
         }
-        res.redirect('/responsable/stagiaires');
+        req.flash('success', 'Stagiaire supprimé avec succès');
+        res.redirect('/stagiaires');
     } catch (error) {
+        req.flash('error', 'Erreur lors de la suppression du stagiaire');
         res.status(500).render('error', { message: 'Erreur lors de la suppression' });
     }
 };

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const stagiaireController = require('../controllers/stagiaireController');
 const { isAuthenticated, checkRole } = require('../middlewares/auth.middleware');
+const { requireAuth } = require('../middlewares/requireAuth');
 
 // =====================
 // FRONT OFFICE : Stagiaire
@@ -19,11 +20,10 @@ router.put('/:id', isAuthenticated, checkRole('stagiaire'), stagiaireController.
 // =====================
 
 // Lister tous les stagiaires
-// router.get('/', isAuthenticated, checkRole('responsable'), stagiaireController.getAllStagiaires);
-router.get('/', stagiaireController.getAllStagiaires);
+router.get('/', requireAuth, checkRole('responsable'), stagiaireController.getAllStagiaires);
 
 // Supprimer un stagiaire
-router.delete('/:id', isAuthenticated, checkRole('responsable'), stagiaireController.deleteStagiaire);
+router.post('/:id', requireAuth, checkRole('responsable'), stagiaireController.deleteStagiaire);
 
 
 

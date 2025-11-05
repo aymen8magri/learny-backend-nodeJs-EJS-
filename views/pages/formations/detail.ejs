@@ -68,18 +68,27 @@
                 <a href="/entreprise/demandes-inscription/<%= formation._id %>" class="btn btn-secondary">
                   <i class="fa fa-envelope-open-text"></i> Demandes d’inscriptions
                 </a>
-                <button onclick="supprimerFormation('<%= formation._id %>')" class="btn btn-danger">
-                  <i class="fa fa-trash"></i> Supprimer
-                </button>
+                <form action="/formations/<%= formation._id %>" method="POST"
+                      onsubmit="return confirm('Voulez-vous vraiment supprimer cette formation ?');"
+                      style="display:inline;">
+                  <button class="btn btn-danger">
+                    <i class="fa fa-trash"></i> Supprimer
+                  </button>
+                </form>
+                
               </div>
             <% } else { %>
               <div class="d-flex flex-wrap gap-2">
                 <a href="/entreprise/edit-formation/<%= formation._id %>" class="btn btn-warning">
                   <i class="fa fa-edit"></i> Modifier
                 </a>
-                <button onclick="supprimerFormation('<%= formation._id %>')" class="btn btn-danger">
-                  <i class="fa fa-trash"></i> Supprimer
-                </button>
+                <form action="/formations/<%= formation._id %>" method="POST"
+                      onsubmit="return confirm('Voulez-vous vraiment supprimer cette formation ?');"
+                      style="display:inline;">
+                  <button class="btn btn-danger">
+                    <i class="fa fa-trash"></i> Supprimer
+                  </button>
+                </form>
               </div>
             <% } %>
 
@@ -87,7 +96,7 @@
             <!-- 👑 RESPONSABLE -->
             <% if (formation.status === 'Validée') { %>
               <div class="d-flex flex-wrap gap-2">
-                <form action="/responsable/formations/<%= formation._id %>/reject" method="POST">
+                <form action="/responsable/formations/<%= formation._id %>/reject" method="POST" onsubmit="return confirm('Voulez-vous vraiment refuser cette formation ?');">
                   <button class="btn btn-danger">
                     <i class="fa fa-times-circle"></i> Refuser
                   </button>
@@ -96,12 +105,12 @@
 
             <% } else if (formation.status === 'En attente') { %>
               <div class="d-flex flex-wrap gap-2">
-                <form action="/responsable/formations/<%= formation._id %>/validate" method="POST">
+                <form action="/responsable/formations/<%= formation._id %>/validate" method="POST" onsubmit="return confirm('Voulez-vous vraiment valider cette formation ?');">
                   <button class="btn btn-success">
                     <i class="fa fa-check-circle"></i> Valider
                   </button>
                 </form>
-                <form action="/responsable/formations/<%= formation._id %>/reject" method="POST">
+                <form action="/responsable/formations/<%= formation._id %>/reject" method="POST" onsubmit="return confirm('Voulez-vous vraiment refuser cette formation ?');">
                   <button class="btn btn-danger">
                     <i class="fa fa-times-circle"></i> Refuser
                   </button>
@@ -110,7 +119,7 @@
 
             <% } else if (formation.status === 'Refusée') { %>
               <div class="d-flex flex-wrap gap-2">
-                <form action="/responsable/formations/<%= formation._id %>/validate" method="POST">
+                <form action="/responsable/formations/<%= formation._id %>/validate" method="POST" onsubmit="return confirm('Voulez-vous vraiment valider cette formation ?');">
                   <button class="btn btn-success">
                     <i class="fa fa-check-circle"></i> Valider
                   </button>
@@ -165,23 +174,6 @@
 </section>
 <!-- ============================ Main Section End ================================== -->
 
-
-<!-- ============================ Script suppression ============================ -->
-<script>
-  function supprimerFormation(id) {
-    if (confirm('Voulez-vous vraiment supprimer cette formation ?')) {
-      fetch(`/entreprise/delete-formation/${id}`, { method: 'DELETE' })
-        .then(res => {
-          if (res.ok) {
-            alert('Formation supprimée avec succès');
-            window.location.href = '/entreprise/formations';
-          } else {
-            alert('Erreur lors de la suppression');
-          }
-        });
-    }
-  }
-</script>
 
 
 <!-- ============================ Styles ============================ -->

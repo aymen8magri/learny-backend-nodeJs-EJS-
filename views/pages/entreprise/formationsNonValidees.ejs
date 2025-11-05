@@ -18,31 +18,41 @@
 <!-- ============================ Main Section Start ================================== -->
 <section class="gray-bg py-5">
   <div class="container">
+  
 
-    <!-- Barre de recherche et filtrage -->
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
-      <div class="input-group w-auto">
-        <input type="text" id="searchInput" class="form-control" placeholder="Rechercher une formation...">
-        <button class="btn btn-dark" type="button"><i class="fa fa-search"></i></button>
-      </div>
-
-      <div class="dropdown">
-        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-          <i class="fa fa-filter me-2"></i> Filtrer par statut
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="filterDropdown">
-          <li><a class="dropdown-item filter-option active" data-status="tous">Toutes</a></li>
-          <li><a class="dropdown-item filter-option" data-status="En attente">En attente</a></li>
-          <li><a class="dropdown-item filter-option" data-status="Refusée">Refusée</a></li>
-        </ul>
-      </div>
-    </div>
 
     <% if (formations.length === 0) { %>
       <div class="alert alert-info text-center shadow-sm">
         Aucune formation en attente ou refusée pour le moment.
       </div>
     <% } else { %>
+
+      <!-- Barre de recherche et filtrage -->
+      <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <div class="input-group w-auto">
+          <input type="text" id="searchInput" class="form-control" placeholder="Rechercher une formation...">
+          <button class="btn btn-dark" type="button"><i class="fa fa-search"></i></button>
+        </div>
+
+        <div class="dropdown">
+          <button class="btn btn-outline-primary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fa fa-filter me-2"></i> Filtrer par statut
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="filterDropdown">
+            <li><a class="dropdown-item filter-option active" data-status="tous">Toutes</a></li>
+            <li><a class="dropdown-item filter-option" data-status="En attente">En attente</a></li>
+            <li><a class="dropdown-item filter-option" data-status="Refusée">Refusée</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Messages flash -->
+            <% if (success && success.length > 0) { %>
+              <div class="alert alert-success alert-dismissible fade show text-center mt-3" role="alert">
+                <strong><i class="fa fa-check-circle"></i> <%= success %></strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+              </div>
+            <% } %>
 
       <!-- Tableau principal -->
       <table class="table table-striped table-bordered mt-4 align-middle text-center" id="formationsTable">
@@ -86,17 +96,44 @@
               </td>
               <td>
                 <div class="d-flex justify-content-center gap-2">
+
+                  <!-- ajouter -->
+                  <% if (f.status === 'Refusée') { %>
+                  <form action="/formations/update/<%= f._id %>" method="POST"
+                        style="display:inline;"
+                        onsubmit="return confirm('Voulez-vous vraiment remettre cette formation en attente ?');">
+                    <input type="hidden" name="status" value="En attente">
+                    <button class="btn btn-success btn-sm" title="Ajouter">
+                      <i class="fa fa-plus"></i>
+                    </button>
+                  </form>
+                  <% } %>
+                  <!-- Modifier -->
+                  <form action="/responsable/formations/<%= f._id %>/edit" method="POST"
+                        style="display:inline;"
+                        onsubmit="return confirm('Voulez-vous vraiment modifier cette formation ?');">
+                    <button class="btn btn-warning btn-sm text-dark" title="Modifier">
+                      <i class="fa fa-edit"></i>
+                    </button>
+                  </form>
+
+                  <!-- Supprimer -->
+                  <form action="/formations/<%= f._id %>" method="POST"
+                        style="display:inline;"
+                        onsubmit="return confirm('Voulez-vous vraiment supprimer cette formation ?');">
+                    <button class="btn btn-danger btn-sm" title="Supprimer">
+                      <i class="fa fa-trash"></i>
+                    </button>
+                  </form>
+
+                  <!-- Détails -->
                   <a href="/formations/all/<%= f._id %>" class="btn btn-info btn-sm" title="Détails">
                     <i class="fa fa-eye"></i>
                   </a>
-                  <a href="/entreprise/edit-formation/<%= f._id %>" class="btn btn-warning btn-sm" title="Modifier">
-                    <i class="fa fa-edit"></i>
-                  </a>
-                  <button onclick="supprimerFormation('<%= f._id %>')" class="btn btn-danger btn-sm" title="Supprimer">
-                    <i class="fa fa-trash"></i>
-                  </button>
+
                 </div>
               </td>
+
             </tr>
           <% }) %>
         </tbody>
@@ -153,11 +190,4 @@
     });
   });
 
-  // Suppression
-  function supprimerFormation(id) {
-    if (confirm("Voulez-vous vraiment supprimer cette formation ?")) {
-      fetch(`/formations/${id}`, { method: 'DELETE' })
-        .then(res => res.ok && location.reload());
-    }
-  }
 </script>

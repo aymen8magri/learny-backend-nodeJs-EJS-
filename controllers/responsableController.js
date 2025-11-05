@@ -78,8 +78,10 @@ exports.validateFormation = async (req, res) => {
     if (!formation) {
       return res.status(404).render('error', { message: 'Formation non trouvée' });
     }
+    req.flash('success', 'Formation validée avec succès');
     res.redirect('/responsable/formations/validated');
   } catch (error) {
+    req.flash('error', 'Erreur lors de la validation de la formation');
     res.status(500).render('error', { message: 'Erreur lors de la validation' });
   }
 };
@@ -91,8 +93,25 @@ exports.rejectFormation = async (req, res) => {
     if (!formation) {
       return res.status(404).render('error', { message: 'Formation non trouvée' });
     }
+    req.flash('success', 'Formation refusée avec succès');
     res.redirect('/responsable/formations/pending');
   } catch (error) {
+    req.flash('error', 'Erreur lors du rejet de la formation');
     res.status(500).render('error', { message: 'Erreur lors du rejet' });
+  }
+};
+
+// Supprimer une formation
+exports.deleteFormation = async (req, res) => {
+  try {
+    const formation = await Formation.findByIdAndDelete(req.params.id);
+    if (!formation) {
+      return res.status(404).render('error', { message: 'Formation non trouvée' });
+    }
+    req.flash('success', 'Formation supprimée avec succès');
+    res.redirect('/responsable/formations/pending');
+  } catch (error) {
+    req.flash('error', 'Erreur lors de la suppression de la formation');
+    res.status(500).render('error', { message: 'Erreur lors de la suppression' });
   }
 };

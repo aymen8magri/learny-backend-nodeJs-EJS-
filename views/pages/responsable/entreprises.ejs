@@ -36,7 +36,11 @@
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu<%= e._id %>">
                   <li><a class="dropdown-item" href="/entreprises/<%= e._id %>"><i class="fa fa-info-circle me-2"></i> Voir les détails</a></li>
-                  <li><a class="dropdown-item text-danger" href="#" onclick="supprimerEntreprise('<%= e._id %>')"><i class="fa fa-trash me-2"></i> Supprimer</a></li>
+                  <li>
+                  <a href="#" class="dropdown-item text-danger" onclick="supprimerEntreprise('<%= e._id %>', this)">
+                    <i class="fa fa-trash me-2"></i> Supprimer
+                  </a>
+                </li>
                 </ul>
               </div>
 
@@ -99,3 +103,17 @@
   </div>
 </section>
 <!-- ============================ Entreprises Section End ================================== -->
+
+<script>
+  async function supprimerEntreprise(id, el) {
+    if (!confirm('Voulez-vous vraiment supprimer cette entreprise ?')) return;
+
+    const res = await fetch(`/entreprises/${id}`, { method: 'POST' });
+    if (res.ok) {
+      alert('Entreprise supprimée avec succès');
+      window.location.reload();
+    } else {
+      alert('Erreur lors de la suppression');
+    }
+  }
+</script>

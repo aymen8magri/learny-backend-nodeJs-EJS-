@@ -18,30 +18,30 @@
 <section class="gray-bg py-5">
   <div class="container">
 
-    <!-- Barre de recherche + filtre -->
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
-      <div class="input-group w-auto">
-        <input type="text" id="searchInput" class="form-control" placeholder="Rechercher une formation...">
-        <button class="btn btn-dark" type="button"><i class="fa fa-search"></i></button>
-      </div>
-
-      <div class="dropdown">
-        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-          Trier par
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="filterDropdown">
-          <li><a class="dropdown-item sort-option active" data-sort="none">Aucun</a></li>
-          <li><a class="dropdown-item sort-option" data-sort="price">Prix</a></li>
-          <li><a class="dropdown-item sort-option" data-sort="duration">Durée</a></li>
-        </ul>
-      </div>
-    </div>
-
     <% if (formations.length === 0) { %>
       <div class="alert alert-info text-center">
         Aucune formation validée pour le moment.
       </div>
     <% } else { %>
+      <!-- Barre de recherche + filtre -->
+      <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <div class="input-group w-auto">
+          <input type="text" id="searchInput" class="form-control" placeholder="Rechercher une formation...">
+          <button class="btn btn-dark" type="button"><i class="fa fa-search"></i></button>
+        </div>
+
+        <div class="dropdown">
+          <button class="btn btn-outline-primary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            Trier par
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="filterDropdown">
+            <li><a class="dropdown-item sort-option active" data-sort="none">Aucun</a></li>
+            <li><a class="dropdown-item sort-option" data-sort="price">Prix</a></li>
+            <li><a class="dropdown-item sort-option" data-sort="duration">Durée</a></li>
+          </ul>
+        </div>
+      </div>
+
       <div class="row" id="formationsContainer">
         <% formations.forEach(function(f) { %>
           <div class="col-lg-4 col-md-6 col-sm-12 formation-card" 
@@ -60,7 +60,11 @@
                     <li><a class="dropdown-item" href="/formations/all/<%= f._id %>"><i class="fa fa-info-circle me-2"></i> Détails</a></li>
                     <li><a class="dropdown-item" href="/entreprise/edit-formation/<%= f._id %>"><i class="fa fa-edit me-2"></i> Modifier</a></li>
                     <li><a class="dropdown-item" href="/entreprise/inscriptions/<%= f._id %>"><i class="fa fa-users me-2"></i> Liste des inscrits</a></li>
-                    <li><a class="dropdown-item text-danger" style="cursor:pointer;" onclick="supprimerFormation('<%= f._id %>')"><i class="fa fa-trash me-2"></i> Supprimer</a></li>
+                    <li>
+                      <a class="dropdown-item text-danger" style="cursor:pointer;" onclick="supprimerFormation('<%= f._id %>', this)">
+                        <i class="fa fa-trash me-2"></i> Supprimer
+                      </a>
+                    </li>
                   </ul>
                 </div>
 
@@ -139,10 +143,18 @@
   });
 
   // Supprimer une formation
-  function supprimerFormation(id) {
-    if (confirm("Voulez-vous vraiment supprimer cette formation ?")) {
-      fetch(`/formations/${id}`, { method: 'DELETE' })
-        .then(res => { if (res.ok) location.reload(); });
-    }
+  function supprimerFormation(id, el) {
+    if (!confirm('Voulez-vous vraiment supprimer cette formation ?')) return;
+
+    fetch(`/formations/${id}`, { method: 'POST' })
+      .then(res => {
+        if (res.ok) {
+          alert('Formation supprimée avec succès');
+          window.location.reload();
+          if (card) card.remove();
+        } else {
+          alert('Erreur lors de la suppression');
+        }
+      });
   }
 </script>

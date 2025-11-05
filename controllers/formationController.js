@@ -123,8 +123,10 @@ exports.updateFormation = async (req, res) => {
         if (!updatedFormation) {
             return res.status(404).render('error', { message: 'Formation non trouvée' });
         }
-        res.redirect('/formations/list');
+        req.flash('success', 'Formation mise à jour avec succès'); // ajouter flash
+        res.redirect('/formations/non-validees');
     } catch (error) {
+        req.flash('error', 'Erreur lors de la mise à jour de la formation'); 
         res.status(500).render('error', { message: 'Erreur lors de la mise à jour de la formation' });
     }
 };
@@ -136,8 +138,10 @@ exports.deleteFormation = async (req, res) => {
         if (!deletedFormation) {
             return res.status(404).render('error', { message: 'Formation non trouvée' });
         }
-        res.redirect('/formations/list');
+        req.flash('success', 'Formation supprimée avec succès');
+        res.redirect('/formations/non-validees');
     } catch (error) {
+        req.flash('error', 'Erreur lors de la suppression de la formation');
         res.status(500).render('error', { message: 'Erreur lors de la suppression de la formation' });
     }
 };

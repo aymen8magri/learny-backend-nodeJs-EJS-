@@ -16,5 +16,6 @@ router.get('/formations/validated', requireAuth, checkRole('responsable'), respo
 // Actions sur les formations
 router.post('/formations/:id/validate', requireAuth, checkRole('responsable'), responsableController.validateFormation);
 router.post('/formations/:id/reject', requireAuth, checkRole('responsable'), responsableController.rejectFormation);
+router.post('/formations/:id/delete', requireAuth, checkRole('responsable'), responsableController.deleteFormation);
 
 module.exports = router;

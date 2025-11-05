@@ -31,7 +31,7 @@ router.post('/profile/update', requireAuth, checkRole('entreprise'), entrepriseC
 router.get('/all/entreprises', entrepriseController.getAllEntreprisesAdmin);
 
 // Supprimer une entreprise
-router.delete('/:id', requireAuth, checkRole('responsable'), entrepriseController.deleteEntreprise);
+router.post('/:id', requireAuth, checkRole('responsable'), entrepriseController.deleteEntreprise);
 
 
 module.exports = router;

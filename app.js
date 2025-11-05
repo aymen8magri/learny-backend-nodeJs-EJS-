@@ -6,6 +6,9 @@ const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
 const cookieParser = require('cookie-parser');
 
+const session = require('express-session');
+const flash = require('connect-flash');
+
 require('./config/connect');
 
 const { requireAuth } = require('./middlewares/requireAuth');
@@ -36,6 +39,23 @@ app.use(express.urlencoded({ extended: true }));
 // Permet de lire et écrire des cookies
 app.use(cookieParser());
 
+// Configuration des sessions pour stocker les données utilisateur
+app.use(session({
+  secret: '123456789',
+  resave: false,
+  saveUninitialized: false
+}));
+
+// Middleware pour les messages flash (notifications)
+app.use(flash());
+
+// Pour rendre les messages accessibles dans EJS :
+app.use((req, res, next) => {
+  res.locals.success = req.flash('success');
+  res.locals.error = req.flash('error');
+  next();
+});
+
 // Configuration du moteur de templates EJS + layouts
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -58,7 +78,7 @@ app.get('/', (req, res) => res.render('pages/home'));
 
 // Routes protégées (nécessitent une authentification)
 app.use('/stagiaires', requireAuth, stagiaireRoutes);
-app.use('/formations', formationRoutes);
+app.use('/formations', requireAuth, formationRoutes);
 app.use('/entreprises', requireAuth, entrepriseRoutes);
 app.use('/responsable', requireAuth, responsableRoutes);
 

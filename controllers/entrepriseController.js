@@ -84,15 +84,29 @@ exports.getAllEntreprisesAdmin = async (req, res) => {
     }
 };
 
-// Supprimer une entreprise
+// Supprimer une entreprise et ses formations associées
 exports.deleteEntreprise = async (req, res) => {
-    try {
-        const deletedEntreprise = await Entreprise.findByIdAndDelete(req.params.id);
-        if (!deletedEntreprise) {
-            return res.status(404).render('error', { message: 'Entreprise non trouvée' });
-        }
-        res.redirect('/entreprises/all');
-    } catch (error) {
-        res.status(500).render('error', { message: 'Erreur lors de la suppression de l\'entreprise' });
+  try {
+    // Vérifier si l'entreprise existe
+    const entreprise = await Entreprise.findById(req.params.id);
+    if (!entreprise) {
+      return res.status(404).render('error', { message: 'Entreprise non trouvée' });
     }
+
+    // Supprimer toutes les formations associées à cette entreprise
+    await Formation.deleteMany({ entreprise: entreprise._id });
+
+    // Supprimer ensuite l’entreprise elle-même
+    await Entreprise.findByIdAndDelete(req.params.id);
+
+    console.log(`✅ ${entreprise.name} et ses formations ont été supprimées.`);
+
+    // Rediriger vers la page des entreprises
+    res.redirect('/entreprises/all/entreprises');
+
+  } catch (error) {
+    console.error('Erreur lors de la suppression :', error);
+    res.status(500).render('error', { message: 'Erreur lors de la suppression de l\'entreprise et de ses formations.' });
+  }
 };
+
