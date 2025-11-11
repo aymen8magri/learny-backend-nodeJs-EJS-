@@ -3,6 +3,7 @@ const router = express.Router();
 const entrepriseController = require('../controllers/entrepriseController');
 const { isAuthenticated, checkRole } = require('../middlewares/auth.middleware');
 const { requireAuth } = require('../middlewares/requireAuth');
+const upload = require('../middlewares/upload');
 
 
 // =====================
@@ -24,7 +25,7 @@ router.get('/dashboard', requireAuth, checkRole('entreprise'), entrepriseControl
 router.get('/profile', requireAuth, checkRole('entreprise'), entrepriseController.showProfilePage);
 
 // Mettre à jour le profil de entreprise
-router.post('/profile/update', requireAuth, checkRole('entreprise'), entrepriseController.updateProfile);
+router.post('/profile/update', requireAuth, checkRole('entreprise'), upload.single('image'), entrepriseController.updateProfile);
 
 // Lister toutes les entreprises
 //router.get('/all/entreprises', requireAuth, checkRole('responsable'), entrepriseController.getAllEntreprisesAdmin);

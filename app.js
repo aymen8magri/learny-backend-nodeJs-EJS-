@@ -56,6 +56,12 @@ app.use((req, res, next) => {
   next();
 });
 
+// Dossier public pour les fichiers statiques
+app.use(express.static('public'));
+// Dossier pour les fichiers uploadés
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
 // Configuration du moteur de templates EJS + layouts
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));

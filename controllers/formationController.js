@@ -56,36 +56,37 @@ exports.showAddForm = async (req, res) => {
 
 // Créer une formation
 exports.createFormation = async (req, res) => {
-    try {
-        // On récupère les champs du formulaire
-        const { title, description, dateDebut, dateFin, nbPlaces, duration, price, planning } = req.body;
+  try {
+    const { title, description, dateDebut, dateFin, nbPlaces, duration, price, planning } = req.body;
 
-        // On récupère l'entreprise connectée via req.user.id
-        const entrepriseId = req.user.id;
+    const entrepriseId = req.user.id;
 
-        // Création de la formation
-        const newFormation = new Formation({
-            title,
-            description,
-            dateDebut,
-            dateFin,
-            nbPlaces,
-            duration,
-            price,
-            planning,
-            entreprise: entrepriseId,  // association automatique
-            status: 'En attente'       // valeur par défaut
-        });
+    // Si une image est uploadée
+    const imagePath = req.file ? '/uploads/' + req.file.filename : null;
 
-        await newFormation.save();
+    const newFormation = new Formation({
+      title,
+      description,
+      dateDebut,
+      dateFin,
+      nbPlaces,
+      duration,
+      price,
+      planning,
+      entreprise: entrepriseId,
+      image: imagePath, 
+      status: 'En attente',
+    });
 
-        // Redirection vers le formulaire ou vers la liste
-        res.redirect('/formations/add');  // ou '/formations/all/entreprise/:id' si tu veux montrer la liste
-    } catch (error) {
-        console.error(error);
-        res.status(500).render('error', { message: 'Erreur lors de la création de la formation' });
-    }
+    await newFormation.save();
+
+    res.redirect('/formations/add');
+  } catch (error) {
+    console.error(error);
+    res.status(500).render('error', { message: 'Erreur lors de la création de la formation' });
+  }
 };
+
 
 // Formations validées pour l'entreprise connectée
 exports.getFormationsValideesEntreprise = async (req, res) => {

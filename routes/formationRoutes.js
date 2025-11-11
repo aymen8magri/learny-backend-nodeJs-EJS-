@@ -3,6 +3,8 @@ const router = express.Router();
 const formationController = require('../controllers/formationController');
 const { requireAuth } = require('../middlewares/requireAuth');
 const { checkRole } = require('../middlewares/auth.middleware');
+const upload = require('../middlewares/upload');
+
 
 // =====================
 // BACK OFFICE : Entreprise et Responsable
@@ -10,7 +12,7 @@ const { checkRole } = require('../middlewares/auth.middleware');
 
 // Formulaire d'ajout d'une formation (entreprise)
 router.get('/add', requireAuth, checkRole('entreprise'), formationController.showAddForm);
-router.post('/add', requireAuth, checkRole('entreprise'), formationController.createFormation);
+router.post('/add', requireAuth, checkRole('entreprise'),  upload.single('image'), formationController.createFormation);
 
 // Lister les formations validees/non-validees de l'entreprise connectée
 router.get('/validees', requireAuth, checkRole('entreprise'), formationController.getFormationsValideesEntreprise);

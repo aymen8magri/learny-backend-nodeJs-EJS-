@@ -61,6 +61,10 @@ exports.updateProfile = async (req, res) => {
         const { name, address, phone, password } = req.body;
         const updateData = { name, address, phone };
 
+        if (req.file) {
+          updateData.logo = '/uploads/' + req.file.filename;
+        }
+
         if (password && password.trim() !== "") {
             updateData.password = await bcrypt.hash(password, 10);
         }
