@@ -18,8 +18,11 @@ router.post('/add', requireAuth, checkRole('entreprise'),  upload.single('image'
 router.get('/validees', requireAuth, checkRole('entreprise'), formationController.getFormationsValideesEntreprise);
 router.get('/non-validees', requireAuth, checkRole('entreprise'), formationController.getFormationsNonValideesEntreprise);
 
-// Mettre à jour / supprimer une formation (entreprise / responsable)
-router.post('/update/:id', requireAuth, checkRole('entreprise'), formationController.updateFormation);
+// Afficher le formulaire pré-rempli
+router.get("/edit/:id", requireAuth, checkRole('responsable', 'entreprise'), formationController.getEditForm);
+// Mettre à jour une formation
+router.post('/update/:id', requireAuth, checkRole('entreprise'), upload.single('image'), formationController.updateFormation);
+// Supprimer une formation
 router.post('/:id', requireAuth, checkRole('responsable', 'entreprise'), formationController.deleteFormation);
 
 // Lister toutes les formations (responsable)

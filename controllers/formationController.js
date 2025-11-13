@@ -47,7 +47,7 @@ exports.showAddForm = async (req, res) => {
         const entrepriseId = req.user.id;
         const entrepriseName = req.user.nom; // si tu as stocké le nom dans le token/session
 
-        res.render('pages/formations/add', { entrepriseId, entrepriseName });
+        res.render('pages/formations/add', { entrepriseId, entrepriseName, isEdit: false, formation: null });
     } catch (error) {
         console.error(error);
         res.status(500).render('error', { message: 'Erreur lors du chargement du profil' });
@@ -56,35 +56,35 @@ exports.showAddForm = async (req, res) => {
 
 // Créer une formation
 exports.createFormation = async (req, res) => {
-  try {
-    const { title, description, dateDebut, dateFin, nbPlaces, duration, price, planning } = req.body;
+    try {
+        const { title, description, dateDebut, dateFin, nbPlaces, duration, price, planning } = req.body;
 
-    const entrepriseId = req.user.id;
+        const entrepriseId = req.user.id;
 
-    // Si une image est uploadée
-    const imagePath = req.file ? '/uploads/' + req.file.filename : null;
+        // Si une image est uploadée
+        const imagePath = req.file ? '/uploads/' + req.file.filename : null;
 
-    const newFormation = new Formation({
-      title,
-      description,
-      dateDebut,
-      dateFin,
-      nbPlaces,
-      duration,
-      price,
-      planning,
-      entreprise: entrepriseId,
-      image: imagePath, 
-      status: 'En attente',
-    });
+        const newFormation = new Formation({
+            title,
+            description,
+            dateDebut,
+            dateFin,
+            nbPlaces,
+            duration,
+            price,
+            planning,
+            entreprise: entrepriseId,
+            image: imagePath,
+            status: 'En attente',
+        });
 
-    await newFormation.save();
+        await newFormation.save();
 
-    res.redirect('/formations/add');
-  } catch (error) {
-    console.error(error);
-    res.status(500).render('error', { message: 'Erreur lors de la création de la formation' });
-  }
+        res.redirect('/formations/add');
+    } catch (error) {
+        console.error(error);
+        res.status(500).render('error', { message: 'Erreur lors de la création de la formation' });
+    }
 };
 
 
@@ -116,21 +116,69 @@ exports.getFormationsNonValideesEntreprise = async (req, res) => {
     }
 };
 
+// Afficher le formulaire pré-rempli
+exports.getEditForm = async (req, res) => {
+    try {
+        const formation = await Formation.findById(req.params.id);
+        if (!formation) return res.status(404).send("Formation introuvable");
+        res.render("pages/formations/add", {
+            formation, // on envoie la formation existante
+            entrepriseId: formation.entreprise,
+            entrepriseName: req.user.name, // ou autre selon ton modèle
+            isEdit: true // indicateur qu’on est en mode édition
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Erreur serveur");
+    }
+};
 
 // Mettre à jour une formation
 exports.updateFormation = async (req, res) => {
     try {
-        const updatedFormation = await Formation.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!updatedFormation) {
-            return res.status(404).render('error', { message: 'Formation non trouvée' });
+        const { title, description, dateDebut, dateFin, nbPlaces, duration, price, planning } = req.body;
+
+        // Si une image est uploadée
+        const imagePath = req.file ? '/uploads/' + req.file.filename : undefined;
+
+        // Construction des données à mettre à jour
+        const updateData = {
+            title,
+            description,
+            dateDebut,
+            dateFin,
+            nbPlaces,
+            duration,
+            price,
+            planning,
+        };
+
+        // Si une nouvelle image est envoyée → on la met à jour
+        if (imagePath) {
+            updateData.image = imagePath;
         }
-        req.flash('success', 'Formation mise à jour avec succès'); // ajouter flash
-        res.redirect('/formations/non-validees');
+
+        // Mettre à jour la formation et récupérer la doc mise à jour
+        const updatedFormation = await Formation.findByIdAndUpdate(
+            req.params.id,
+            updateData,
+            { new: true } // ✅ retourne l'objet mis à jour
+        );
+
+        // Redirection selon le status
+        if (updatedFormation.status === 'Validée') {
+            req.flash('success', 'Formation mise à jour avec succès');
+            res.redirect('/formations/validees');
+        } else {
+            req.flash('success', 'Formation mise à jour avec succès');
+            res.redirect('/formations/non-validees');
+        }
     } catch (error) {
-        req.flash('error', 'Erreur lors de la mise à jour de la formation'); 
+        console.error("Erreur updateFormation:", error);
         res.status(500).render('error', { message: 'Erreur lors de la mise à jour de la formation' });
     }
 };
+
 
 // Supprimer une formation
 exports.deleteFormation = async (req, res) => {

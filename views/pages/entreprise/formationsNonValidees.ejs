@@ -109,7 +109,7 @@
                   </form>
                   <% } %>
                   <!-- Modifier -->
-                  <form action="/responsable/formations/<%= f._id %>/edit" method="POST"
+                  <form action="/formations/edit/<%= f._id %>" method="GET"
                         style="display:inline;"
                         onsubmit="return confirm('Voulez-vous vraiment modifier cette formation ?');">
                     <button class="btn btn-warning btn-sm text-dark" title="Modifier">

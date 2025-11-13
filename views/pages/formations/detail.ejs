@@ -59,7 +59,7 @@
             <!-- ✅ ENTREPRISE -->
             <% if (formation.status === 'Validée') { %>
               <div class="d-flex flex-wrap gap-2">
-                <a href="/entreprise/edit-formation/<%= formation._id %>" class="btn btn-warning">
+                <a href="/formations/edit/<%= formation._id %>" class="btn btn-warning">
                   <i class="fa fa-edit"></i> Modifier
                 </a>
                 <a href="/entreprise/inscriptions/<%= formation._id %>" class="btn btn-info">
@@ -79,7 +79,7 @@
               </div>
             <% } else { %>
               <div class="d-flex flex-wrap gap-2">
-                <a href="/entreprise/edit-formation/<%= formation._id %>" class="btn btn-warning">
+                <a href="/formations/edit/<%= formation._id %>" class="btn btn-warning">
                   <i class="fa fa-edit"></i> Modifier
                 </a>
                 <form action="/formations/<%= formation._id %>" method="POST"

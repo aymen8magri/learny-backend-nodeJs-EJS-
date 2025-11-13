@@ -41,7 +41,13 @@
           </ul>
         </div>
       </div>
-
+      <!-- Messages flash -->
+            <% if (success && success.length > 0) { %>
+              <div class="alert alert-success alert-dismissible fade show text-center mt-3" role="alert">
+                <strong><i class="fa fa-check-circle"></i> <%= success %></strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+              </div>
+            <% } %>
       <div class="row" id="formationsContainer">
         <% formations.forEach(function(f) { %>
           <div class="col-lg-4 col-md-6 col-sm-12 formation-card" 
@@ -58,7 +64,7 @@
                   </button>
                   <ul class="dropdown-menu" aria-labelledby="dropdownMenu<%= f._id %>">
                     <li><a class="dropdown-item" href="/formations/all/<%= f._id %>"><i class="fa fa-info-circle me-2"></i> Détails</a></li>
-                    <li><a class="dropdown-item" href="/entreprise/edit-formation/<%= f._id %>"><i class="fa fa-edit me-2"></i> Modifier</a></li>
+                    <li><a class="dropdown-item" href="/formations/edit/<%= f._id %>"><i class="fa fa-edit me-2"></i> Modifier</a></li>
                     <li><a class="dropdown-item" href="/entreprise/inscriptions/<%= f._id %>"><i class="fa fa-users me-2"></i> Liste des inscrits</a></li>
                     <li>
                       <a class="dropdown-item text-danger" style="cursor:pointer;" onclick="supprimerFormation('<%= f._id %>', this)">
