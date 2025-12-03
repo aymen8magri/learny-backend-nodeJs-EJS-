@@ -71,6 +71,13 @@ exports.login = async (req, res) => {
       const token = jwt.sign({ id: stagiaire._id, role: 'stagiaire' }, '123456789', {
         expiresIn: '2h',
       });
+      // Ajoute le cookie
+      res.cookie('jwt', token, {
+        httpOnly: true,
+        secure: false, // true si HTTPS
+        sameSite: 'lax', 
+        maxAge: 2*60*60*1000
+      });
 
       return res.status(200).json({ token, user: stagiaire });
     }

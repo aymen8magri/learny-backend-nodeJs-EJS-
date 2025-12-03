@@ -3,7 +3,12 @@ const jwt = require('jsonwebtoken');
 exports.requireAuth = (req, res, next) => {
   console.log("Cookies reçus:", req.cookies);
 
-  const token = req.cookies?.token;
+  let token = req.cookies?.token || req.cookies?.jwt;
+
+  // Cas API Flutter : token dans Authorization
+  if (!token && req.headers.authorization) {
+    token = req.headers.authorization.split(' ')[1];
+  }
 
   if (!token) {
     // Cas Flutter (API)
@@ -22,6 +27,9 @@ exports.requireAuth = (req, res, next) => {
     next();
   } catch (err) {
     console.error('Erreur JWT:', err.message);
+    if (req.originalUrl.startsWith('/api')) {
+      return res.status(401).json({ message: 'Token invalide' });
+    }
     res.clearCookie('token');
     return res.redirect('/login');
   }

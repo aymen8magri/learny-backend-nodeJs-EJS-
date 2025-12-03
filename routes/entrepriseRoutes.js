@@ -6,12 +6,7 @@ const { requireAuth } = require('../middlewares/requireAuth');
 const upload = require('../middlewares/upload');
 
 
-// =====================
-// FRONT OFFICE : Stagiaire
-// =====================
 
-// lister toutes les entreprises
-router.get('/', requireAuth, checkRole('stagiaire'), entrepriseController.getAllEntreprises);
 
 
 // =====================
@@ -34,5 +29,15 @@ router.get('/all/entreprises', entrepriseController.getAllEntreprisesAdmin);
 // Supprimer une entreprise
 router.post('/:id', requireAuth, checkRole('responsable'), entrepriseController.deleteEntreprise);
 
+
+// =====================
+// FRONT OFFICE : Stagiaire
+// =====================
+
+// lister toutes les entreprises
+router.get('/', requireAuth, checkRole('stagiaire'), entrepriseController.getAllEntreprises);
+
+// get entreprise par id
+router.get('/:id', requireAuth, checkRole('stagiaire'), entrepriseController.getEntreprisesById);
 
 module.exports = router;

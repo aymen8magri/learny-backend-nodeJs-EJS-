@@ -4,15 +4,21 @@ const Formation = require('../models/Formation');
 // FRONT OFFICE : Stagiaire
 // =====================
 
-// Voir toutes les formations
+// Voir toutes les formations validées
 exports.getAllFormations = async (req, res) => {
     try {
-        const formations = await Formation.find().sort({ createdAt: -1 });
+        // On ne prend que les formations dont le status est "Validée"
+        const formations = await Formation
+            .find({ status: "Validée" })
+            .populate("entreprise", "name logo email phone address")
+            .sort({ createdAt: -1 });
         res.json(formations);
     } catch (error) {
+        console.error(error);
         res.status(500).json({ message: 'Erreur serveur' });
     }
 };
+
 
 // Voir une formation par ID
 exports.getFormationById = async (req, res) => {

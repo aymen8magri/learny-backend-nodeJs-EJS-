@@ -2,6 +2,7 @@
 // Importation des modules
 // ===============================
 const express = require('express');
+const cors = require('cors');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
 const cookieParser = require('cookie-parser');
@@ -19,13 +20,17 @@ const stagiaireRoutes = require('./routes/stagiaireRoutes');
 const formationRoutes = require('./routes/formationRoutes');
 const entrepriseRoutes = require('./routes/entrepriseRoutes');
 const responsableRoutes = require('./routes/responsableRoutes');
+const formationStagiaireRoutes = require('./routes/formationStagiaireRoutes');
 const authRoutes = require('./routes/authRoutes');
 
 // ===============================
 // Initialisation de l’application
 // ===============================
 const app = express();
-
+app.use(cors({
+  origin: true, // Ou spécifiez l'origine de votre client, ex: 'http://localhost:8080'
+  credentials: true // ESSENTIEL pour autoriser l'envoi de cookies
+}));
 // ===============================
 // Middlewares globaux
 // ===============================
@@ -76,7 +81,7 @@ app.use(setUserInViews);
 
 // ===============================
 // Définition des routes
-// ===============================
+// ===============================  
 
 // Routes publiques (sans authentification)
 app.use('/', authRoutes);
@@ -87,6 +92,8 @@ app.use('/stagiaires', requireAuth, stagiaireRoutes);
 app.use('/formations', requireAuth, formationRoutes);
 app.use('/entreprises', requireAuth, entrepriseRoutes);
 app.use('/responsable', requireAuth, responsableRoutes);
+app.use('/formation-stagiaire', requireAuth, formationStagiaireRoutes);
+
 
 // ===============================
 // Gestion des erreurs 404

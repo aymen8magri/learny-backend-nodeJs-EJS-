@@ -17,6 +17,25 @@ exports.getAllEntreprises = async (req, res) => {
     }
 };
 
+// Récupérer une entreprise par ID
+exports.getEntreprisesById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const entreprise = await Entreprise.findById(id);
+
+    if (!entreprise) {
+      return res.status(404).json({ message: 'Entreprise non trouvée' });
+    }
+
+    res.status(200).json(entreprise);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Erreur serveur', error });
+  }
+};
+
+
 
 // =====================
 // BACK OFFICE : Responsable, Entreprise

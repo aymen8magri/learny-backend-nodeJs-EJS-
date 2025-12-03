@@ -1,0 +1,217 @@
+<!-- ============================ Page Title Start ================================== -->
+<section class="call-to-act" style="background:#0b85ec url(/img/landing-bg.png) no-repeat">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-12 col-md-12">
+        <h2 class="text-light">Stagiaires Inscrits</h2>
+        <span class="ipn-subtitle text-light">
+          Dashboard Entreprise —
+          <span style="color: #000; font-weight: 600;">Liste des inscrits pour la formation</span>
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ============================ Page Title End ================================== -->
+
+
+<!-- ============================ Main Section Start ================================== -->
+<section class="gray-bg py-5">
+  <div class="container">
+
+    <% if (stagiaires.length===0) { %>
+      <div class="alert alert-info text-center shadow-sm">
+        Aucun stagiaire inscrit à cette formation pour le moment.
+      </div>
+      <% } else { %>
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+
+          <!-- Recherche -->
+          <div class="input-group w-auto mb-2">
+            <input type="text" id="searchInput" class="form-control" placeholder="Rechercher un stagiaire...">
+            <button class="btn btn-dark" type="button"><i class="fa fa-search"></i></button>
+          </div>
+
+          <!-- Filtre Dropdown -->
+          <div class="dropdown mb-2">
+            <button class="btn btn-outline-primary dropdown-toggle" type="button" id="filterDropdown"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fa fa-filter me-2"></i> Filtrer par statut
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="filterDropdown">
+              <li><a class="dropdown-item filter-option active" data-status="tous">Toutes</a></li>
+              <li><a class="dropdown-item filter-option" data-status="Validée">Validée</a></li>
+              <li><a class="dropdown-item filter-option" data-status="En attente">En attente</a></li>
+              <li><a class="dropdown-item filter-option" data-status="Refusée">Refusée</a></li>
+            </ul>
+          </div>
+
+        </div>
+
+
+        <!-- Tableau principal -->
+        <table class="table table-striped table-bordered mt-4 align-middle text-center" id="stagiairesTable">
+          <thead class="table-primary">
+            <tr>
+              <th>Photo</th>
+              <th>Nom</th>
+              <th>Email</th>
+              <th>Téléphone</th>
+              <th>Date d'inscription</th>
+              <th>État</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% stagiaires.forEach(s=> { %>
+              <tr>
+                <td>
+                  <img src="<%= s.stagiaire.avatar || '/img/user.png' %>" class="img-fluid rounded-circle" width="55"
+                    height="55" alt="stagiaire">
+                </td>
+
+                <td><strong>
+                    <%= s.stagiaire.firstName %>
+                      <%= s.stagiaire.lastName %>
+                  </strong></td>
+                <td>
+                  <%= s.stagiaire.email %>
+                </td>
+                <td>
+                  <%= s.stagiaire.phone || '—' %>
+                </td>
+
+                <!-- Date inscription -->
+                <td>
+                  <% const daysAgo=Math.floor( (Date.now() - new Date(s.createdAt)) / (1000 * 60 * 60 * 24) ); %>
+                    <%= daysAgo===0 ? "Aujourd’hui" : "Il y a " + daysAgo + " jours" %>
+                </td>
+
+                <!-- État d'inscription -->
+                <td>
+                  <% let colorClass="bg-warning" ; %>
+
+                    <% if (s.etatInscription==="Validée" ) colorClass="bg-success" ; %>
+                      <% if (s.etatInscription==="Refusée" ) colorClass="bg-danger" ; %>
+
+                        <span class="badge <%= colorClass %>" style="font-size: 0.9rem;">
+                          <%= s.etatInscription %>
+                        </span>
+                </td>
+
+                <!-- Actions -->
+                <td>
+                  <div class="btn-group">
+
+                    <!-- Voir profil -->
+                    <a href="/entreprise/stagiaire/<%= s.stagiaire._id %>" class="btn btn-outline-primary btn-sm"
+                      title="Voir détails">
+                      <i class="fa fa-user"></i>
+                    </a>
+
+                    <!-- Accepter -->
+                    <a href="/entreprise/inscription/valider/<%= s._id %>" class="btn btn-success btn-sm"
+                      title="Accepter">
+                      <i class="fa fa-check"></i>
+                    </a>
+
+                    <!-- Refuser -->
+                    <a href="/entreprise/inscription/refuser/<%= s._id %>" class="btn btn-warning btn-sm"
+                      title="Refuser">
+                      <i class="fa fa-ban"></i>
+                    </a>
+
+                    <!-- Supprimer -->
+                    <a href="/entreprise/inscription/delete/<%= s._id %>"
+                      onclick="return confirm('Supprimer cette inscription ?');" class="btn btn-danger btn-sm"
+                      title="Supprimer">
+                      <i class="fa fa-trash"></i>
+                    </a>
+
+                  </div>
+                </td>
+
+              </tr>
+              <% }) %>
+          </tbody>
+        </table>
+
+
+        <% } %>
+
+  </div>
+</section>
+<!-- ============================ Main Section End ================================== -->
+
+
+<!-- ============================ Styles ============================ -->
+<style>
+  .gray-bg {
+    background-color: #f9f9f9;
+  }
+
+  .table th {
+    background-color: #0b85ec !important;
+    color: white;
+    vertical-align: middle;
+  }
+
+  .table td {
+    vertical-align: middle;
+  }
+
+  .table-hover tbody tr:hover {
+    background-color: #eef6ff;
+    transition: 0.2s;
+  }
+
+  .badge {
+    padding: 8px 12px;
+    border-radius: 8px;
+  }
+
+  .btn-group .btn {
+    margin: 0 2px;
+  }
+</style>
+
+
+<!-- ============================ Script ============================ -->
+<script>
+  // Recherche + Filtre combinés
+  document.getElementById('searchInput').addEventListener('input', filterTable);
+
+  document.querySelectorAll('.filter-option').forEach(item => {
+    item.addEventListener('click', function () {
+
+      // Enlever active des autres
+      document.querySelectorAll('.filter-option').forEach(i => i.classList.remove('active'));
+
+      // Activer celui cliqué
+      this.classList.add('active');
+
+      // Mettre le texte du bouton
+      document.getElementById('filterDropdown').innerHTML =
+        '<i class="fa fa-filter me-2"></i>' + this.textContent;
+
+      filterTable();
+    });
+  });
+
+  function filterTable() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const filterStatus = document.querySelector('.filter-option.active').dataset.status;
+
+    document.querySelectorAll('#stagiairesTable tbody tr').forEach(row => {
+      const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+      const status = row.querySelector('td:nth-child(6)').textContent.trim();
+
+      const matchName = name.includes(search);
+      const matchStatus = (filterStatus === "tous" || filterStatus === status);
+
+      row.style.display = (matchName && matchStatus) ? '' : 'none';
+    });
+  }
+</script>
